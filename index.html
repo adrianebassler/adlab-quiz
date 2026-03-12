@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why Aren't Your Ads Working? — The Ad Design Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5F0E8;
+    --coral: #D4614A;
+    --charcoal: #1C1C1C;
+    --blue: #6B9EC4;
+    --amber: #E8A84A;
+    --cream-dark: #EDE7D9;
+    --coral-light: #E8897A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    color: var(--charcoal);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    padding: 28px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid rgba(28,28,28,0.1);
+  }
+
+  .logo {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--charcoal);
+  }
+
+  .logo span {
+    color: var(--coral);
+  }
+
+  /* ── SCREENS ── */
+  .screen {
+    display: none;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .screen.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── INTRO SCREEN ── */
+  #screen-intro {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 80px 40px 100px;
+    text-align: center;
+  }
+
+  .eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 24px;
+  }
+
+  .intro-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(38px, 6vw, 58px);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--charcoal);
+    margin-bottom: 24px;
+  }
+
+  .intro-title em {
+    font-style: italic;
+    color: var(--coral);
+  }
+
+  .intro-subtitle {
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: rgba(28,28,28,0.75);
+    max-width: 520px;
+    margin: 0 auto 48px;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    background: var(--charcoal);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 18px 48px;
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .btn-primary:hover {
+    background: var(--coral);
+    transform: translateY(-1px);
+  }
+
+  .intro-meta {
+    margin-top: 24px;
+    font-size: 13px;
+    color: rgba(28,28,28,0.4);
+    font-weight: 300;
+  }
+
+  /* ── QUIZ SCREEN ── */
+  #screen-quiz {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+  }
+
+  .progress-bar-wrap {
+    margin-bottom: 56px;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(28,28,28,0.4);
+    margin-bottom: 10px;
+  }
+
+  .progress-track {
+    height: 2px;
+    background: rgba(28,28,28,0.1);
+    width: 100%;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--coral);
+    transition: width 0.4s ease;
+  }
+
+  .question-block { display: none; }
+  .question-block.active { display: block; animation: fadeUp 0.4s ease forwards; }
+
+  .question-number {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 16px;
+  }
+
+  .question-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 3.5vw, 30px);
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--charcoal);
+    margin-bottom: 40px;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 20px 24px;
+    background: white;
+    border: 1.5px solid rgba(28,28,28,0.08);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+  }
+
+  .option:hover {
+    border-color: var(--coral);
+    background: #fff;
+    transform: translateX(4px);
+  }
+
+  .option.selected {
+    border-color: var(--coral);
+    background: rgba(212,97,74,0.04);
+  }
+
+  .option-letter {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--coral);
+    min-width: 18px;
+    padding-top: 2px;
+  }
+
+  .option-text {
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--charcoal);
+  }
+  .question-nav {
+    margin-top: 40px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .btn-next {
+    background: var(--charcoal);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 16px 36px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .btn-next.ready {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .btn-next.ready:hover {
+    background: var(--coral);
+  }
+
+  /* ── EMAIL GATE ── */
+  #screen-email {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 80px 40px 100px;
+    text-align: center;
+  }
+
+  .email-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+
+  .email-sub {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: rgba(28,28,28,0.75);
+    margin-bottom: 40px;
+  }
+
+  .email-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .email-input {
+    padding: 16px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    border: 1.5px solid rgba(28,28,28,0.15);
+    background: white;
+    color: var(--charcoal);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .email-input:focus { border-color: var(--coral); }
+
+  .email-input::placeholder { color: rgba(28,28,28,0.35); }
+
+  .btn-results {
+    background: var(--coral);
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 18px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-results:hover { background: #c05540; }
+
+  .privacy-note {
+    margin-top: 16px;
+    font-size: 12px;
+    color: rgba(28,28,28,0.35);
+  }
+
+  /* ── RESULT SCREENS ── */
+  .result-screen {
+    display: none;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .result-screen.active { display: block; }
+
+  .result-hero {
+    background: var(--charcoal);
+    color: var(--cream);
+    padding: 80px 40px;
+    text-align: center;
+  }
+
+  .result-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 20px;
+  }
+
+  .result-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(30px, 5vw, 48px);
+    font-weight: 700;
+    line-height: 1.15;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .result-headline em {
+    font-style: italic;
+    color: var(--coral);
+  }
+
+  .result-body {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 64px 40px 48px;
+  }
+
+  .result-door-wrap {
+    max-width: 100%;
+    padding: 0 0 80px 0;
+  }
+
+  .result-intro {
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.8;
+    color: rgba(28,28,28,0.85);
+    margin-bottom: 48px;
+    border-left: 3px solid var(--coral);
+    padding-left: 24px;
+  }
+
+  .action-box {
+    background: white;
+    border: 1.5px solid rgba(28,28,28,0.08);
+    padding: 40px;
+    margin-bottom: 40px;
+  }
+
+  .action-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 16px;
+  }
+
+  .action-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--charcoal);
+  }
+
+  .action-text {
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.8;
+    color: rgba(28,28,28,0.88);
+  }
+
+  .action-text p { margin-bottom: 16px; }
+  .action-text p:last-child { margin-bottom: 0; }
+
+  .action-text strong {
+    color: var(--charcoal);
+    font-weight: 600;
+  }
+
+  .closing-thought {
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.8;
+    color: rgba(28,28,28,0.80);
+    font-style: italic;
+    margin-top: 28px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(28,28,28,0.08);
+  }
+
+  /* ── CORAL DOOR ── */
+  .quiet-door {
+    background: var(--coral);
+    padding: 48px 40px;
+    text-align: left;
+    max-width: 100%;
+    margin: 0 0 0 0;
+  }
+
+  .door-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 16px;
+  }
+
+  .door-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 3vw, 28px);
+    font-weight: 700;
+    color: white;
+    margin-bottom: 20px;
+    line-height: 1.2;
+  }
+
+  .door-text {
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.75;
+    color: rgba(255,255,255,0.88);
+    margin-bottom: 16px;
+    max-width: 580px;
+  }
+
+  .door-price {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 28px;
+    letter-spacing: 0.05em;
+  }
+
+  .door-link {
+    display: inline-block;
+    background: white;
+    color: var(--coral);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 16px 32px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .door-link:hover {
+    background: var(--charcoal);
+    color: white;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .header { padding: 20px 24px; }
+    #screen-intro, #screen-quiz, #screen-email { padding-left: 24px; padding-right: 24px; }
+    .result-hero { padding: 60px 24px; }
+    .result-body { padding: 48px 24px 32px; }
+    .action-box { padding: 28px 24px; }
+    .quiet-door { padding: 40px 0; }
+    .quiet-door > div { padding: 0 24px !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">The <span>Ad Design</span> Lab</div>
+</header>
+
+<!-- INTRO SCREEN -->
+<div id="screen-intro" class="screen active">
+  <p class="eyebrow">Free Diagnostic</p>
+  <h1 class="intro-title">Why Aren't Your<br><em>Ads Working?</em></h1>
+  <p class="intro-subtitle">Six questions. One clear answer. Find out what's actually standing between you and ads that convert.</p>
+  <button class="btn-primary" onclick="startQuiz()">Find Out Now</button>
+  <p class="intro-meta">Takes about 2 minutes</p>
+</div>
+
+<!-- QUIZ SCREEN -->
+<div id="screen-quiz" class="screen">
+  <div class="progress-bar-wrap">
+    <div class="progress-label">
+      <span id="progress-text">Question 1 of 6</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- Q1 -->
+  <div class="question-block active" id="q1">
+    <p class="question-number">Question 01</p>
+    <h2 class="question-text">When you sit down to make an ad, how do you usually decide what to create?</h2>
+    <div class="options">
+      <div class="option" onclick="selectOption(this, 1, 'A')">
+        <span class="option-letter">A</span>
+        <span class="option-text">I look at what's worked before and try to repeat it</span>
+      </div>
+      <div class="option" onclick="selectOption(this, 1, 'B')">
+        <span class="option-letter">B</span>
+        <span class="option-text">I look at what competitors are doing and take inspiration</span>
+      </div>
+      <div class="option" onclick="selectOption(this, 1, 'C')">
+        <span class="option-letter">C</span>
+        <span class="option-text">I make something that feels right for my brand</span>
+      </div>
+      <div class="option" onclick="selectOption(this, 1, 'D')">
+        <span class="option-letter">D</span>
+        <span class="option-text">Honestly I'm not sure — I just start making something</span>
+      </div>
+    </div>
+    <div class="question-nav">
+      <button class="btn-next" id="next-1" onclick="nextQuestion(1)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="question-block" id="q2">
+    <p class="question-number">Question 02</p>
+    <h2 class="question-text">How many different ads are you typically running at one time?</h2>
+    <div class="options">
+      <div class="option" onclick="selectOption(this, 2, 'A')">
+        <span class="option-letter">A</span>
+        <span class="option-text">Just one or two — I put everything behind what I think will work</span>
+      </div>
+      <div class="option" onclick="selectOption(this, 2, 'B')">
+        <span class="option-letter">B</span>
+        <span class="option-text">A few, but they're pretty similar to each other</span>
+      </div>
+      <div class="option" onclick="selectOption(this, 2, 'C')">
+        <span class="option-letter">C</span>
+        <span class="option-text">Several, but I'm not sure if they're actually different enough</span>
+      </div>
+      <div class="option" onclick="selectOption(this, 2, 'D')">
+        <span class="option-letter">D</span>
+        <span class="option-text">I don't have a consistent number — it changes all the time</span>
+      </div>
+    </div>
+    <div class="question-nav">
+      <button class="btn-next" id="next-2" onclick="nextQuestion(2)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="question-block" id="q3">
+    <p class="question-number">Question 03</p>
+    <h2 class="question-text">Who are you talking to in your ads right now?</h2>
+    <div class="options">
+      <div class="option" onclick="selectOption(this, 3, 'A')">
+        <span class="option-letter">A</span>
+        <span class="option-text">Everyone who might be interested in what I sell</span>
+      </div>
+      <div class="option" onclick="selectOption(this, 3, 'B')">
+        <span class="option-letter">B</span>
+        <span class="option-text">People who already know my brand or have visited my site</span>
+      </div>
+      <div class="option" onclick="selectOption(this, 3, 'C')">
+        <span class="option-letter">C</span>
+        <span class="option-text">A mix — but I'm using the same ad for all of them</span>
+      </div>
+      <div class="option" onclick="selectOption(this, 3, 'D')">
+        <span class="option-letter">D</span>
+        <span class="option-text">I'm not totally sure — I set the targeting and hoped for the best</span>
+      </div>
+    </div>
+    <div class="question-nav">
+      <button class="btn-next" id="next-3" onclick="nextQuestion(3)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="question-block" id="q4">
+    <p class="question-number">Question 04</p>
+    <h2 class="question-text">When you write your ad — what are you focused on?</h2>
+    <div class="options">
+      <div class="option" onclick="selectOption(this, 4, 'A')">
+        <span class="option-letter">A</span>
+        <span class="option-text">Making it look good and on-brand</span>
+      </div>
+      <div class="option" onclick="selectOption(this, 4, 'B')">
+        <span class="option-letter">B</span>
+        <span class="option-text">Explaining what the product or service does</span>
+      </div>
+      <div class="option" onclick="selectOption(this, 4, 'C')">
+        <span class="option-letter">C</span>
+        <span class="option-text">Getting someone to click or buy</span>
+      </div>
+      <div class="option" onclick="selectOption(this, 4, 'D')">
+        <span class="option-letter">D</span>
+        <span class="option-text">I don't have a clear focus — I'm trying to do all of it at once</span>
+      </div>
+    </div>
+    <div class="question-nav">
+      <button class="btn-next" id="next-4" onclick="nextQuestion(4)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="question-block" id="q5">
+    <p class="question-number">Question 05</p>
+    <h2 class="question-text">When an ad isn't performing, what do you usually do?</h2>
+    <div class="options">
+      <div class="option" onclick="selectOption(this, 5, 'A')">
+        <span class="option-letter">A</span>
+        <span class="option-text">Turn it off and start something completely new</span>
+      </div>
+      <div class="option" onclick="selectOption(this, 5, 'B')">
+        <span class="option-letter">B</span>
+        <span class="option-text">Change the image or the copy and run it again</span>
+      </div>
+      <div class="option" onclick="selectOption(this, 5, 'C')">
+        <span class="option-letter">C</span>
+        <span class="option-text">Leave it longer and hope it picks up</span>
+      </div>
+      <div class="option" onclick="selectOption(this, 5, 'D')">
+        <span class="option-letter">D</span>
+        <span class="option-text">I'm not sure what to change so I usually just kill it</span>
+      </div>
+    </div>
+    <div class="question-nav">
+      <button class="btn-next" id="next-5" onclick="nextQuestion(5)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="question-block" id="q6">
+    <p class="question-number">Question 06</p>
+    <h2 class="question-text">Be honest — when you look at your current ads, could you explain why you made each one?</h2>
+    <div class="options">
+      <div class="option" onclick="selectOption(this, 6, 'A')">
+        <span class="option-letter">A</span>
+        <span class="option-text">Yes — I had a clear reason for each one</span>
+      </div>
+      <div class="option" onclick="selectOption(this, 6, 'B')">
+        <span class="option-letter">B</span>
+        <span class="option-text">Sort of — I had a general idea but nothing specific</span>
+      </div>
+      <div class="option" onclick="selectOption(this, 6, 'C')">
+        <span class="option-letter">C</span>
+        <span class="option-text">Not really — they made sense at the time but I couldn't explain the logic</span>
+      </div>
+      <div class="option" onclick="selectOption(this, 6, 'D')">
+        <span class="option-letter">D</span>
+        <span class="option-text">No — I made them because I needed to run something</span>
+      </div>
+    </div>
+    <div class="question-nav">
+      <button class="btn-next" id="next-6" onclick="showEmailGate()">See My Results →</button>
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL GATE -->
+<div id="screen-email" class="screen">
+  <p class="eyebrow">One last step</p>
+  <h2 class="email-title">Your diagnosis is ready.</h2>
+  <p class="email-sub">Enter your email and we'll send your results — plus a practical next step you can take today.</p>
+  <div class="email-form">
+    <input type="text" class="email-input" placeholder="First name" id="input-name" />
+    <input type="email" class="email-input" placeholder="Email address" id="input-email" />
+    <button class="btn-results" onclick="showResults()">Show Me My Results →</button>
+  </div>
+  <p class="privacy-note">No spam. Just your results and the occasional useful thing.</p>
+</div>
+
+<!-- ── RESULT 1: WRONG AD ── -->
+<div id="result-1" class="result-screen">
+  <div class="result-hero">
+    <p class="result-label">Your Diagnosis</p>
+    <h2 class="result-headline">You're talking to the<br><em>wrong person</em><br>at the wrong time.</h2>
+  </div>
+  <div class="result-body">
+    <p class="result-intro">Your ads aren't failing because they look bad or because your product isn't good. They're failing because the creative you're running doesn't match where your audience actually is.</p>
+
+    <div class="action-box">
+      <p class="action-label">Do This Today</p>
+      <h3 class="action-title">The Two-Question Audit</h3>
+      <div class="action-text">
+        <p>Pull up whatever ads you're currently running. For each one, answer two questions:</p>
+        <p><strong>Does this person already know me?</strong><br>
+        If yes — your ad should be building proof or making an offer.<br>
+        If no — your ad should be creating awareness or sparking curiosity. Not selling.</p>
+        <p><strong>What is this ad actually doing?</strong><br>
+        Look at the creative honestly. Is it introducing you, building trust, or asking for the sale? Now check — does that match your answer to the first question?</p>
+        <p>If there's a mismatch, that's your problem. Not the design. Not the budget. Not the algorithm. The mismatch.</p>
+        <p>Fix that first. Then see what changes.</p>
+      </div>
+      <p class="closing-thought">Most people never audit their ads this way because they're too close to them. But this two-minute check will tell you more about why your ads are underperforming than any amount of new creative will. Do it before you build another thing.</p>
+    </div>
+  </div>
+
+  <div class="quiet-door">
+    <div style="max-width:680px; margin: 0 auto; padding: 0 40px;">
+      <p class="door-label">If you want to go further</p>
+      <h3 class="door-headline">Know exactly which ad to make next — and which ones to run alongside it.</h3>
+      <p class="door-text">Creative on Purpose teaches you how to look at your business, your audience, and where you're stuck — and come out the other side knowing exactly what to build. Not just one ad. The right starting ad, plus the supporting creative that works with it. You stop guessing and start making decisions you can actually explain.</p>
+      <p class="door-text">No Ads Manager. No jargon. Built for entrepreneurs running their own ads.</p>
+      <p class="door-price">$97 — one-time payment, instant access.</p>
+      <a href="#" class="door-link">Learn More About Creative on Purpose →</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── RESULT 2: NO VARIETY ── -->
+<div id="result-2" class="result-screen">
+  <div class="result-hero">
+    <p class="result-label">Your Diagnosis</p>
+    <h2 class="result-headline">You're running<br>one strategy and<br><em>calling it testing.</em></h2>
+  </div>
+  <div class="result-body">
+    <p class="result-intro">You don't have enough variety in your creative — and the variety you do have probably isn't different enough to matter. When you run similar ads repeatedly, the algorithm runs out of new people to show it to. And the people who do see it stop noticing it.</p>
+
+    <div class="action-box">
+      <p class="action-label">Do This Today</p>
+      <h3 class="action-title">The Variety Check</h3>
+      <div class="action-text">
+        <p>Look at your last 30 days of ads. Write down every ad you ran. Now ask yourself — are these actually different, or just visually different?</p>
+        <p><strong>Different headline, same message</strong> — not different enough.<br>
+        <strong>Different image, same offer</strong> — not different enough.<br>
+        <strong>Different format, same angle</strong> — not different enough.</p>
+        <p>Real variety means different jobs. One ad introduces you. One builds trust. One asks for the sale. If all your ads are doing the same thing with a different coat of paint, you don't have variety. You have repetition with extra steps.</p>
+        <p>Ask yourself: can you name the job each of your current ads is doing? Write it down next to each one. If you can't — that's where the work starts.</p>
+      </div>
+      <p class="closing-thought">Once you can name what each ad is there to do, making creative stops feeling overwhelming. You're not just making more ads — you're building a mix where each piece has a purpose. That's when things start to click.</p>
+    </div>
+  </div>
+
+  <div class="quiet-door">
+    <div style="max-width:680px; margin: 0 auto; padding: 0 40px;">
+      <p class="door-label">If you want to go further</p>
+      <h3 class="door-headline">Know exactly which ad to make next — and which ones to run alongside it.</h3>
+      <p class="door-text">Creative on Purpose teaches you how to look at your business, your audience, and where you're stuck — and come out the other side knowing exactly what to build. Not just one ad. The right starting ad, plus the supporting creative that works with it. You stop guessing and start making decisions you can actually explain.</p>
+      <p class="door-text">No Ads Manager. No jargon. Built for entrepreneurs running their own ads.</p>
+      <p class="door-price">$97 — one-time payment, instant access.</p>
+      <a href="#" class="door-link">Learn More About Creative on Purpose →</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── RESULT 3: NO CLEAR JOB ── -->
+<div id="result-3" class="result-screen">
+  <div class="result-hero">
+    <p class="result-label">Your Diagnosis</p>
+    <h2 class="result-headline">Your ads don't<br>have a job.<br><em>So they're not doing one.</em></h2>
+  </div>
+  <div class="result-body">
+    <p class="result-intro">You're making ads. But you're not making ads that are built to do something specific. Every ad that works is doing one clear thing — introducing you, building trust, or converting someone who's ready. When there's no intention behind the build, it ends up doing none of those things well.</p>
+
+    <div class="action-box">
+      <p class="action-label">Do This Today</p>
+      <h3 class="action-title">Three Questions Before You Build Anything</h3>
+      <div class="action-text">
+        <p>Before your next ad — before you think about the image, the copy, the format — stop and answer these three questions in writing:</p>
+        <p><strong>Who specifically is this for?</strong><br>
+        Not your general audience. The specific person at a specific moment in their relationship with you. Someone who's never heard of you. Someone who's been following you for months. Someone who almost bought last week.</p>
+        <p><strong>What do they already know?</strong><br>
+        Do they know your brand exists? Do they trust you? Are they comparison shopping? Your answer changes everything about what the ad should do.</p>
+        <p><strong>What is the one thing I want them to think, feel, or do after seeing this?</strong><br>
+        One thing. Not three. Not "awareness and conversion." One.</p>
+        <p>Write the answers down. Then build the ad to do exactly that one thing. Nothing else.</p>
+      </div>
+      <p class="closing-thought">Those three questions won't solve everything. But they will stop you from building another ad that exists without a reason. Intention before creation — that shift alone will change what you make and how it performs.</p>
+    </div>
+  </div>
+
+  <div class="quiet-door">
+    <div style="max-width:680px; margin: 0 auto; padding: 0 40px;">
+      <p class="door-label">If you want to go further</p>
+      <h3 class="door-headline">Know exactly which ad to make next — and which ones to run alongside it.</h3>
+      <p class="door-text">Creative on Purpose teaches you how to look at your business, your audience, and where you're stuck — and come out the other side knowing exactly what to build. Not just one ad. The right starting ad, plus the supporting creative that works with it. You stop guessing and start making decisions you can actually explain.</p>
+      <p class="door-text">No Ads Manager. No jargon. Built for entrepreneurs running their own ads.</p>
+      <p class="door-price">$97 — one-time payment, instant access.</p>
+      <a href="#" class="door-link">Learn More About Creative on Purpose →</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const answers = {};
+  let currentQ = 1;
+
+  function startQuiz() {
+    showScreen('screen-quiz');
+    updateProgress(0);
+  }
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById(id);
+    if (el) el.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function selectOption(el, qNum, letter) {
+    const block = document.getElementById('q' + qNum);
+    block.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    answers[qNum] = letter;
+    const btn = document.getElementById('next-' + qNum);
+    if (btn) btn.classList.add('ready');
+  }
+
+  function nextQuestion(current) {
+    if (!answers[current]) return;
+    document.getElementById('q' + current).classList.remove('active');
+    currentQ = current + 1;
+    document.getElementById('q' + currentQ).classList.add('active');
+    updateProgress(current);
+    window.scrollTo(0, 0);
+  }
+
+  function updateProgress(done) {
+    const pct = Math.round((done / 6) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-text').textContent = 'Question ' + (done + 1) + ' of 6';
+    document.getElementById('progress-pct').textContent = pct + '%';
+  }
+
+  function showEmailGate() {
+    if (!answers[6]) return;
+    showScreen('screen-email');
+  }
+
+  function showResults() {
+    const diagnosis = getDiagnosis();
+    document.querySelectorAll('.result-screen').forEach(r => r.classList.remove('active'));
+    const result = document.getElementById('result-' + diagnosis);
+    if (result) {
+      result.classList.add('active');
+      window.scrollTo(0, 0);
+    }
+  }
+
+  function getDiagnosis() {
+    const a = answers;
+
+    // Diagnosis 1: Wrong ad for audience temperature
+    // Triggered by Q3 A or C, Q4 B or C, Q1 A or B
+    let score1 = 0;
+    if (a[3] === 'A' || a[3] === 'C') score1 += 2;
+    if (a[4] === 'B' || a[4] === 'C') score1 += 2;
+    if (a[1] === 'A' || a[1] === 'B') score1 += 1;
+
+    // Diagnosis 2: No variety
+    // Triggered by Q2 A or B, Q1 A or C, Q5 A or B
+    let score2 = 0;
+    if (a[2] === 'A' || a[2] === 'B') score2 += 2;
+    if (a[1] === 'A' || a[1] === 'C') score2 += 1;
+    if (a[5] === 'A' || a[5] === 'B') score2 += 2;
+
+    // Diagnosis 3: No clear job
+    // Triggered by Q4 D, Q6 C or D, Q1 C or D
+    let score3 = 0;
+    if (a[4] === 'D') score3 += 2;
+    if (a[6] === 'C' || a[6] === 'D') score3 += 2;
+    if (a[1] === 'C' || a[1] === 'D') score3 += 1;
+
+    if (score1 >= score2 && score1 >= score3) return 1;
+    if (score2 >= score1 && score2 >= score3) return 2;
+    return 3;
+  }
+</script>
+</body>
+</html>
